@@ -1,6 +1,5 @@
 #============================IMPORTS==============================
 
-from abc import abstractproperty
 import tkinter as tk                         #Importing Tkinter module for GUI
 from tkinter import *                        #Importing all tkinter files
 import math                                  #Importing math module for arithmetic
@@ -9,6 +8,7 @@ import os                                    #For saving memory(OPENING FILES AN
 import keyboard                              #For keyboard shortcuts
 from EntryBox import *                       #Custom Entry Boxes
 from PIL import ImageTk, Image               #For imagery
+from tkinter import filedialog
 
 #=================Memory_saving===============
 
@@ -27,13 +27,12 @@ for space in range(len(memory)): #Removing extra space
 #=====================globals=================
 
 global counter #➡ History tab counter
-counter = 0 #➡ Default value
-global sCounter
+counter = 0
+
+global sCounter #➡ Settings tab counter
 sCounter = 0
-global tCounter
-tCounter = 0
-global dd 
-#idk#
+
+#PADS#
 global dPad
 global Pad 
 global sPad
@@ -44,6 +43,32 @@ Pad = 0
 sPad = 0
 wPad = 0
 tPad = 0
+
+global pad
+global theme
+global ui
+global texture
+pad = 'entryPad'
+theme = 'Dark'
+ui = 'default'
+texture = None
+#==========================Settings===========================
+
+if os.path.isfile('settings.txt'):
+    with open('settings.txt','r') as f:
+        tempInfo = f.read()
+        info = eval(tempInfo)
+        maindir = info['texture']
+        mainthm = info['theme']
+        mainui = info['ui']
+
+settings = {
+    "pad":"entryPad",
+    "theme":"Dark",
+    "ui":"default",
+    "texture":texture,
+    "sounds":True
+}
 
 #===========================CLASSES============================
 
@@ -639,13 +664,11 @@ class decNum:
 class setting:
 
     def __init__(self, pad,one=None,two=None,three=None,four=None,five=None,six=None,seven=None,eight=None,nine=None,zero=None,dot=None,dash=None,button=None):
-
             '''
             enter pad for creating main settings page in the the current comtext pad\n
             enter your pads to change the theme \n
             CONTAINS ALL SETTINGS.
             '''
-
             global sCounter
             global setPad
             self.pad = pad
@@ -663,44 +686,233 @@ class setting:
             self.dash = dash
             self.button = button
 
-            tlist = [(self.one),(self.two),(self.three),(self.four),(self.five),(self.six),(self.seven),(self.eight),(self.nine),(self.zero)] #list of primary buttons with <black> background and <white> foreground
+            tlist = [(self.one),(self.two),(self.three),(self.four),(self.five),(self.six),
+                               (self.seven),(self.eight),(self.nine),(self.zero)] #list of primary buttons with <black> background and <white> foreground
             tclst = [(self.dot),(self.dash)] # list of secondary buttons with <#262626> background and <cyan> foreground
 
             if sCounter == 0: #for detecting if settings page is not present
-                global tCounter
+                global theme
+                global texture
                 setPad = tk.Frame((self.pad), bg="black")
                 setPad.place(relwidth=0.98, relheight=0.42, rely=0.58, relx = 0.01)
 
-                def thme(): # FOR SETTING DARK AND LIGHT THEME
-                    global tCounter
-                    if tCounter == 0: #for detecting the current theme to change to light mode (0 theme value for dark mode(also the default theme value))
-                        for butts in tlist:#looping through primary buttons
-                            try:
-                                butts.config(bg="white", fg="black",activebackground="gray", activeforeground="cyan") # configuring primary buttons to light mode
-                                darkb.config(image=toggle_off_new) # changing the toggle button to off ('off' is the switch for light mode)
-                            except AttributeError: # passing if there is an absent button attribute
-                                pass # passing
-                        for butts in tclst:# looping through secondary buttons
-                            try:
-                                butts.config(bg="gray", fg="black") # configuring secondary buttons to light mode with 'gray bg' and 'black fg'
-                            except AttributeError: # passing if there is an absent button attribute
-                                pass # passing
-                        tCounter += 1 #increasig the theme value to denote the present of light mode
 
-                    elif tCounter == 1: #for detecting the current theme to change to dark mode (1 is the theme value for light mode)
-                        for butts in tlist:#looping through primary buttons
-                            try:
-                                butts.config(bg="black", fg="white") # configuring primary buttons to dark mode
-                                darkb.config(image=toggle_on_new) # changing the toggle button to on ('on' is the switch for dark mode)
-                            except AttributeError: # passing if there is an absent button attribute
-                                pass # passing
-                        for butts in tclst: # configuring primary buttons to light mode
-                            try:
-                                butts.config(bg="#262626", fg="cyan") # configuring secondary buttons to dark mode with '#262625 bg' and 'cyan fg'
-                            except AttributeError: # passing if there is an absent button attribute
-                                pass # passing
-                            tCounter = 0 #defaulting theme value to denote the present dark mode
-                #-------------------------------------------------------
+                def thme(): # FOR SETTING DARK AND LIGHT THEME
+                    global mainthm
+                    global one
+                    global two
+                    global three
+                    global four
+                    global five
+                    global six
+                    global seven
+                    global eight
+                    global nine
+                    global zero
+                    global Done
+                    global Dtwo
+                    global Dthree
+                    global Dfour
+                    global Dfive
+                    global Dsix
+                    global Dseven
+                    global Deight
+                    global Dnine
+                    global Dzero
+                    global theme
+                    if mainui == 'default':
+                        if theme == 'Dark' or mainthm == 'Dark': #for detecting the current theme to change to light mode 
+                            for butts in tlist:#looping through primary buttons
+                                try:
+                                    butts.config(bg="white", fg="black",activebackground="gray", activeforeground="cyan") # configuring primary buttons to light mode
+                                    darkb.config(image=toggle_off_new) # changing the toggle button to off ('off' is the switch for light mode)
+                                    settings["theme"]='Light'
+                                except AttributeError: # passing if there is an absent button attribute
+                                    pass # passing
+                            for butts in tclst:# looping through secondary buttons
+                                try:
+                                    butts.config(bg="gray", fg="black") # configuring secondary buttons to light mode with 'gray bg' and 'black fg'
+                                except AttributeError: # passing if there is an absent button attribute
+                                    pass # passing
+                            theme = 'Light' #increasig the theme value to denote the present of light mode
+
+                        elif theme == 'Light' or mainthm == 'Light': #for detecting the current theme to change to dark mode 
+                            for butts in tlist:#looping through primary buttons
+                                try:
+                                    butts.config(bg="black", fg="white") # configuring primary buttons to dark mode
+                                    darkb.config(image=toggle_on_new) # changing the toggle button to on ('on' is the switch for dark mode)
+                                    settings["theme"]='Dark'
+                                except AttributeError: # passing if there is an absent button attribute
+                                    pass # passing
+                            for butts in tclst: # configuring primary buttons to light mode
+                                try:
+                                    butts.config(bg="#262626", fg="cyan") # configuring secondary buttons to dark mode with '#262625 bg' and 'cyan fg'
+                                except AttributeError: # passing if there is an absent button attribute
+                                    pass # passing
+                                theme = 'Dark' #defaulting theme value to denote the present dark mode
+
+                    elif mainui == 'custom':
+                        one = ImageTk.PhotoImage(file=f"{maindir}/one.png")
+                        two = ImageTk.PhotoImage(file=f"{maindir}/two.png")
+                        three = ImageTk.PhotoImage(file=f"{maindir}/three.png")
+                        four = ImageTk.PhotoImage(file=f"{maindir}/four.png")
+                        five = ImageTk.PhotoImage(file=f"{maindir}/five.png")
+                        six = ImageTk.PhotoImage(file=f"{maindir}/six.png")
+                        seven = ImageTk.PhotoImage(file=f"{maindir}/seven.png")
+                        eight = ImageTk.PhotoImage(file=f"{maindir}/eight.png")
+                        nine = ImageTk.PhotoImage(file=f"{maindir}/nine.png")
+                        zero = ImageTk.PhotoImage(file=f"{maindir}/zero.png")
+                        Done = ImageTk.PhotoImage(file=f"{maindir}/Done.png")
+                        Dtwo = ImageTk.PhotoImage(file=f"{maindir}/Dtwo.png")
+                        Dthree = ImageTk.PhotoImage(file=f"{maindir}/Dthree.png")
+                        Dfour = ImageTk.PhotoImage(file=f"{maindir}/Dfour.png")
+                        Dfive = ImageTk.PhotoImage(file=f"{maindir}/Dfive.png")
+                        Dsix = ImageTk.PhotoImage(file=f"{maindir}/Dsix.png")
+                        Dseven = ImageTk.PhotoImage(file=f"{maindir}/Dseven.png")
+                        Deight = ImageTk.PhotoImage(file=f"{maindir}/Deight.png")
+                        Dnine = ImageTk.PhotoImage(file=f"{maindir}/Dnine.png")
+                        Dzero = ImageTk.PhotoImage(file=f"{maindir}/Dzero.png")
+                        if mainthm == 'Dark' or theme == 'Dark': #for detecting the current theme to change to light mode 
+                            (self.one).config(image=Done,bg="white")
+                            (self.two).config(image=Dtwo,bg="white")
+                            (self.three).config(image=Dthree,bg="white")
+                            (self.four).config(image=Dfour,bg="white")
+                            (self.five).config(image=Dfive,bg="white")
+                            (self.six).config(image=Dsix,bg="white")
+                            (self.seven).config(image=Dseven,bg="white")
+                            (self.eight).config(image=Deight,bg="white")
+                            (self.nine).config(image=Dnine,bg="white")
+                            (self.zero).config(image=Dzero,bg="white")
+                            darkb.config(image=toggle_off_new,) 
+                            print("changed to light")
+                            settings["theme"]='Light'    
+                            mainthm = 'Light'                   
+                            theme = 'Light' #increasig the theme value to denote the present of light mode
+
+                        elif mainthm == 'Light' or theme == 'Light': #for detecting the current theme to change to dark mode 
+                            (self.one).config(image=one,bg="black")
+                            (self.two).config(image=two,bg="black")
+                            (self.three).config(image=three,bg="black")
+                            (self.four).config(image=four,bg="black")
+                            (self.five).config(image=five,bg="black")
+                            (self.six).config(image=six,bg="black")
+                            (self.seven).config(image=seven,bg="black")
+                            (self.eight).config(image=eight,bg="black")
+                            (self.nine).config(image=nine,bg="black")
+                            (self.zero).config(image=zero,bg="black")
+                            darkb.config(image=toggle_on_new)
+                            print("changed to dark")
+                            settings["theme"]='Dark'
+                            mainthm = 'Dark'  
+                            theme = 'Dark' #defaulting theme value to denote the present dark mode
+                
+                
+                def customTheme():
+                    global maindir
+                    global mainui
+                    global ui
+                    ui = 'custom'
+                    mainui = 'custom'
+                    global one
+                    global two
+                    global three
+                    global four
+                    global five
+                    global six
+                    global seven
+                    global eight
+                    global nine
+                    global zero
+                    global Done
+                    global Dtwo
+                    global Dthree
+                    global Dfour
+                    global Dfive
+                    global Dsix
+                    global Dseven
+                    global Deight
+                    global Dnine
+                    global Dzero
+                    global texture
+                    texture = filedialog.askdirectory(title="Select theme folder")
+                    print(texture)
+                    maindir = texture
+                    try:
+                        one = ImageTk.PhotoImage(file=f"{texture}/one.png")
+                        two = ImageTk.PhotoImage(file=f"{texture}/two.png")
+                        three = ImageTk.PhotoImage(file=f"{texture}/three.png")
+                        four = ImageTk.PhotoImage(file=f"{texture}/four.png")
+                        five = ImageTk.PhotoImage(file=f"{texture}/five.png")
+                        six = ImageTk.PhotoImage(file=f"{texture}/six.png")
+                        seven = ImageTk.PhotoImage(file=f"{texture}/seven.png")
+                        eight = ImageTk.PhotoImage(file=f"{texture}/eight.png")
+                        nine = ImageTk.PhotoImage(file=f"{texture}/nine.png")
+                        zero = ImageTk.PhotoImage(file=f"{texture}/zero.png")
+                        Done = ImageTk.PhotoImage(file=f"{texture}/Done.png")
+                        Dtwo = ImageTk.PhotoImage(file=f"{texture}/Dtwo.png")
+                        Dthree = ImageTk.PhotoImage(file=f"{texture}/Dthree.png")
+                        Dfour = ImageTk.PhotoImage(file=f"{texture}/Dfour.png")
+                        Dfive = ImageTk.PhotoImage(file=f"{texture}/Dfive.png")
+                        Dsix = ImageTk.PhotoImage(file=f"{texture}/Dsix.png")
+                        Dseven = ImageTk.PhotoImage(file=f"{texture}/Dseven.png")
+                        Deight = ImageTk.PhotoImage(file=f"{texture}/Deight.png")
+                        Dnine = ImageTk.PhotoImage(file=f"{texture}/Dnine.png")
+                        Dzero = ImageTk.PhotoImage(file=f"{texture}/Dzero.png")
+                        if theme == 'Dark':
+                            (self.one).config(image=one)
+                            (self.two).config(image=two)
+                            (self.three).config(image=three)
+                            (self.four).config(image=four)
+                            (self.five).config(image=five)
+                            (self.six).config(image=six)
+                            (self.seven).config(image=seven)
+                            (self.eight).config(image=eight)
+                            (self.nine).config(image=nine)
+                            (self.zero).config(image=zero)
+                            settings["texture"] = texture
+                            settings["ui"] = 'custom'
+                        elif theme == 'Light':
+                            (self.one).config(image=Done)
+                            (self.two).config(image=Dtwo)
+                            (self.three).config(image=Dthree)
+                            (self.four).config(image=Dfour)
+                            (self.five).config(image=Dfive)
+                            (self.six).config(image=Dsix)
+                            (self.seven).config(image=Dseven)
+                            (self.eight).config(image=Deight)
+                            (self.nine).config(image=Dnine)
+                            (self.zero).config(image=Dzero)
+                            settings["texture"] = texture
+                            settings["ui"] = 'custom'
+                    except:
+                        pass
+
+                def defaultTheme():
+                    global mainui
+                    settings["ui"] = 'default'
+                    mainui = 'default'
+                    if mainthm == 'Light':
+                        (self.one).config(image='',fg="black")
+                        (self.two).config(image='',fg="black")
+                        (self.three).config(image='',fg="black")
+                        (self.four).config(image='',fg="black")
+                        (self.five).config(image='',fg="black")
+                        (self.six).config(image='',fg="black")
+                        (self.seven).config(image='',fg="black")
+                        (self.eight).config(image='',fg="black")
+                        (self.nine).config(image='',fg="black")
+                        (self.zero).config(image='',fg="black")
+                    if mainthm == 'Dark':
+                        (self.one).config(image='',fg="white")
+                        (self.two).config(image='',fg="white")
+                        (self.three).config(image='',fg="white")
+                        (self.four).config(image='',fg="white")
+                        (self.five).config(image='',fg="white")
+                        (self.six).config(image='',fg="white")
+                        (self.seven).config(image='',fg="white")
+                        (self.eight).config(image='',fg="white")
+                        (self.nine).config(image='',fg="white")
+                        (self.zero).config(image='',fg="white")
 
                 # THEME SWITCHER #
                 dark = tk.Label(setPad, text="Dark Theme ", bg="black", fg='white', font="bangers 12") # THEME LABEL
@@ -708,10 +920,18 @@ class setting:
                 darkb = tk.Button(setPad,bg="black", relief=FLAT, activebackground="black",borderwidth=0,border=0, command=thme) #THEME BUTTONS
                 darkb.place(relheight=0.13, relwidth=0.1, rely=0.14, relx=0.05)
 
-                if tCounter == 1:  #configuring the button to off if light mode is the current theme
+                ctheme = tk.Button(setPad, text="custom",command=customTheme)
+                ctheme.place(relheight=0.12,relwidth=0.18,relx=0.2,rely=0.02)
+
+                dtheme = tk.Button(setPad, text="default",command=defaultTheme)
+                dtheme.place(relheight=0.12,relwidth=0.18,relx=0.5,rely=0.02)
+
+                if theme == 'Light' or mainthm == 'Light':  #configuring the button to off if light mode is the current theme
                     darkb.config(image=toggle_off_new)
-                elif tCounter == 0: #configuring the button to on if dark mode is the current theme (dark theme is the default)
+                    theme = "Light"
+                elif theme == 'Dark' or mainthm == 'Dark': #configuring the button to on if dark mode is the current theme (dark theme is the default)
                     darkb.config(image=toggle_on_new)
+                    theme = 'Dark'
                 try:
                     self.button.lift() # lifting the main setting button
                 except:
@@ -2041,7 +2261,7 @@ def num_1s():
  if Pad == 1 or dPad ==1 or sPad == 1:
     num_1()
     if dPad == 1:
-        if tCounter == 0:
+        if theme == 'Dark':
             num1.config(relief=SUNKEN,bg="#262626", fg="cyan")
             num1.after(58, lambda: num1.config(relief=RAISED, bg="black", fg="white"))
         else:
@@ -3132,26 +3352,26 @@ keyboard.on_press_key("f1", lambda _:duffy())
 
 window = tk.Tk()
 window.title("Calculator")
-window.iconbitmap('ICON\calc1.ico')
+window.iconbitmap('icon\calc1.ico')
 window.minsize(400,500)
 window.maxsize(400,500)
-background = tk.PhotoImage(file=r"ICON\background.png")
+background = tk.PhotoImage(file=r"background\background.png")
 mainFrame = tk.Label(window, bg="black", image=background)#frame(MAIN)
 mainFrame.place(relheight=1, relwidth=1)
 
-#==========================Settings=====================
+#==========================IMAGES=======================
 
-settingsImg = Image.open('ICON/gear.png')
+settingsImg = Image.open('UI_icons/gear.png')
 resizedImg = settingsImg.resize((40,41), Image.ADAPTIVE)
-newpic = ImageTk.PhotoImage(resizedImg)
+newpic = ImageTk.PhotoImage(resizedImg)#FINAL
 
-toggle_on = Image.open("ICON\on.png")
+toggle_on = Image.open("switches\on.png")
 toggle_on_resize = toggle_on.resize((35,17), Image.ANTIALIAS)
-toggle_on_new = ImageTk.PhotoImage(toggle_on_resize)
+toggle_on_new = ImageTk.PhotoImage(toggle_on_resize)#FINAL
 
-toggle_off = Image.open("ICON\off.png")
+toggle_off = Image.open("switches\off.png")
 toggle_off_resize = toggle_off.resize((35,17), Image.ANTIALIAS)
-toggle_off_new = ImageTk.PhotoImage(toggle_off_resize)
+toggle_off_new = ImageTk.PhotoImage(toggle_off_resize)#FINAL
 
 #=========================ENTRY_FIELDS=================================[Using EntryBox module]
 
@@ -3195,51 +3415,51 @@ entryPad.place(relheight=0.65, relwidth=0.98, relx=0.01, rely=0.34)
 #===========================NUMBER_BUTTONS====================================
 
 # 1 #
-num1 = tk.Button(entryPad, bg="red", fg = "white", text="1",command=num_1, activebackground="#262626", activeforeground="cyan",)
+num1 = tk.Button(entryPad, bg="black", fg = "white", text="1",command=num_1, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num1.place(relwidth=0.14, relheight=0.14, relx=0.005, rely=0.005)
 
 # 2 #
-num2 = tk.Button(entryPad, bg="black", fg = "white", text="2",command=num_2, activebackground="#262626", activeforeground="cyan")
+num2 = tk.Button(entryPad, bg="black", fg = "white", text="2",command=num_2, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num2.place(relwidth=0.14, relheight=0.14, relx=0.15, rely=0.005)
 
 # 3 #
-num3 = tk.Button(entryPad, bg="black", fg = "white", text="3",command=num_3, activebackground="#262626", activeforeground="cyan")
+num3 = tk.Button(entryPad, bg="black", fg = "white", text="3",command=num_3, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num3.place(relwidth=0.14, relheight=0.14, relx=0.295, rely=0.005)
 
 # 4 #
-num4 = tk.Button(entryPad, bg="black", fg = "white", text="4",command=num_4, activebackground="#262626", activeforeground="cyan")
+num4 = tk.Button(entryPad, bg="black", fg = "white", text="4",command=num_4, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num4.place(relheight=0.14, relwidth=0.14, relx=0.005, rely=0.15)
 
 # 5 #
-num5 = tk.Button(entryPad, bg="black", fg = "white", text="5",command=num_5, activebackground="#262626", activeforeground="cyan")
+num5 = tk.Button(entryPad, bg="black", fg = "white", text="5",command=num_5, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num5.place(relheight=0.14, relwidth=0.14, relx=0.15, rely=0.15)
 
 # 6 #
-num6 = tk.Button(entryPad, bg="black", fg = "white", text="6",command=num_6, activebackground="#262626", activeforeground="cyan")
+num6 = tk.Button(entryPad, bg="black", fg = "white", text="6",command=num_6, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num6.place(relheight=0.14, relwidth=0.14, relx=0.295, rely=0.15)
 
 # 7 #
-num7 = tk.Button(entryPad, bg="black", fg = "white", text="7",command=num_7, activebackground="#262626", activeforeground="cyan")
+num7 = tk.Button(entryPad, bg="black", fg = "white", text="7",command=num_7, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num7.place(relheight=0.14, relwidth=0.14, relx=0.005, rely=0.295)
 
 # 8 #
-num8 = tk.Button(entryPad, bg="black", fg = "white", text="8",command=num_8, activebackground="#262626", activeforeground="cyan")
+num8 = tk.Button(entryPad, bg="black", fg = "white", text="8",command=num_8, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num8.place(relheight=0.14, relwidth=0.14, relx=0.15, rely=0.295)
 
 # 9 #
-num9 = tk.Button(entryPad, bg="black", fg = "white", text="9",command=num_9, activebackground="#262626", activeforeground="cyan")
+num9 = tk.Button(entryPad, bg="black", fg = "white", text="9",command=num_9, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num9.place(relheight=0.14, relwidth=0.14, relx=0.295, rely=0.295)
 
 # 0 #
-num0 = tk.Button(entryPad, bg="black", fg = "white", text="0",command=num_0, activebackground="#262626", activeforeground="cyan")
+num0 = tk.Button(entryPad, bg="black", fg = "white", text="0",command=num_0, activebackground="#262626", activeforeground="cyan",border=0,borderwidth=0,)
 num0.place(relheight=0.14, relwidth=0.14, relx=0.15, rely=0.44)
 
 # - #
-Negative = tk.Button(entryPad, bg="#262626", fg = "cyan", text="-",  command=negative, activeforeground="white", activebackground="black")
+Negative = tk.Button(entryPad, bg="#262626", fg = "cyan", text="-",  command=negative, activeforeground="white", activebackground="black",border=0,borderwidth=0,)
 Negative.place(relheight=0.14, relwidth=0.14, relx=0.005, rely=0.44)
 
 # . #
-decimal = tk.Button(entryPad, bg="#262626", fg = "cyan", text=".",command=Decimal, activeforeground="white", activebackground="black")
+decimal = tk.Button(entryPad, bg="#262626", fg = "cyan", text=".",command=Decimal, activeforeground="white", activebackground="black",border=0,borderwidth=0,)
 decimal.place(relheight=0.14, relwidth=0.14, relx=0.295, rely=0.44)
 
 #========================OPERATOR_BUTTONS===========================
@@ -3449,7 +3669,7 @@ def standard():
     StAC = tk.Button(StentryPad, bg="#F24607", text="AC", padx=39.15, pady=10, command=ACSt, activebackground="black", activeforeground="#F24607")
     StAC.place(relheight=0.14, relwidth=0.27, relx=0.73, rely=0.44)
 
-    if tCounter == 1:
+    if theme == 'Light':
         Lsetting( Stnum1,Stnum2,Stnum3,Stnum4,Stnum5,Stnum6,Stnum7,Stnum8,Stnum9,Stnum0,Stdecimal,StNegative)
 
     settings2 = tk.Button(StentryPad, bg="black", relief='flat', image=newpic, border=0, borderwidth=0, activebackground="black",command=setting2)
@@ -4068,7 +4288,7 @@ def scientific():
     SAC= tk.Button(SentryPad, bg="#F24607", text="AC", command=ACS, activebackground="black", activeforeground="#F24607")
     SAC.place(relheight=0.14,relwidth=0.27,relx=0.73,rely=0.585)
 
-    if tCounter == 1:
+    if theme == 'Light':
         Lsetting(Snum1,Snum2,Snum3,Snum4,Snum5,Snum6,Snum7,Snum8,Snum9,Snum0,Sdecimal,SNegative)
 
     settings3 = tk.Button(SentryPad, bg="black", relief='flat', image=newpic, border=0, borderwidth=0, activebackground="black",command=setting3)
@@ -4564,7 +4784,7 @@ def weight():
     WAC = tk.Button(WentryPad, bg="#F24607", font="calibri 10", text="AC",command=ACW, activebackground="black", activeforeground="#F24607")
     WAC.place(relheight=0.17, relwidth=0.27, rely=0.73, relx=0.72)
 
-    if tCounter == 1:
+    if theme == 'Light':
         Lsetting(Wnum1,Wnum2,Wnum3,Wnum4,Wnum5,Wnum6,Wnum7,Wnum8,Wnum9,Wnum0,Wdecimal)
 
     settings4 = tk.Button(WentryPad, bg="black", relief='flat', image=newpic, border=0, borderwidth=0, activebackground="black", command=setting4)
@@ -5004,7 +5224,7 @@ def time():
     AC = tk.Button(TentryPad, bg="#F24607", font="calibri 10", text="AC",command=ACT, activebackground="black", activeforeground="#F24607")
     AC.place(relheight=0.17, relwidth=0.27, rely=0.73, relx=0.72)
 
-    if tCounter == 1:
+    if theme == 'Light':
         Lsetting(Tnum1,Tnum2,Tnum3,Tnum4,Tnum5,Tnum6,Tnum7,Tnum8,Tnum9,Tnum0,Tdecimal)
 
     settings5 = tk.Button(TentryPad, bg="black", relief='flat', image=newpic, border=0, borderwidth=0, activebackground="black", command=setting5)
@@ -5085,6 +5305,85 @@ keyboard.add_hotkey("alt + s", lambda: scientific())
 keyboard.add_hotkey("alt + w", lambda: weight())
 keyboard.add_hotkey("alt + t", lambda: time())
 
+try:
+    if maindir:
+        if mainui == 'custom':
+            if mainthm == 'Dark':
+                one = ImageTk.PhotoImage(file=f'{maindir}/one.png')
+                two = ImageTk.PhotoImage(file=f"{maindir}/two.png")
+                three = ImageTk.PhotoImage(file=f"{maindir}/three.png")
+                four = ImageTk.PhotoImage(file=f"{maindir}/four.png")
+                five = ImageTk.PhotoImage(file=f"{maindir}/five.png")
+                six = ImageTk.PhotoImage(file=f"{maindir}/six.png")
+                seven = ImageTk.PhotoImage(file=f"{maindir}/seven.png")
+                eight = ImageTk.PhotoImage(file=f"{maindir}/eight.png")
+                nine = ImageTk.PhotoImage(file=f"{maindir}/nine.png")
+                zero = ImageTk.PhotoImage(file=f"{maindir}/zero.png")
+                num1.config(image=one,bg="black")
+                num2.config(image=two,bg="black")
+                num3.config(image=three,bg="black")
+                num4.config(image=four,bg="black")
+                num5.config(image=five,bg="black")
+                num6.config(image=six,bg="black")
+                num7.config(image=seven,bg="black")
+                num8.config(image=eight,bg="black")
+                num9.config(image=nine,bg="black")
+                num0.config(image=zero,bg="black")
+            
+            if mainthm == 'Light':
+                one = ImageTk.PhotoImage(file=f'{maindir}/Done.png')
+                two = ImageTk.PhotoImage(file=f"{maindir}/Dtwo.png")
+                three = ImageTk.PhotoImage(file=f"{maindir}/Dthree.png")
+                four = ImageTk.PhotoImage(file=f"{maindir}/Dfour.png")
+                five = ImageTk.PhotoImage(file=f"{maindir}/Dfive.png")
+                six = ImageTk.PhotoImage(file=f"{maindir}/Dsix.png")
+                seven = ImageTk.PhotoImage(file=f"{maindir}/Dseven.png")
+                eight = ImageTk.PhotoImage(file=f"{maindir}/Deight.png")
+                nine = ImageTk.PhotoImage(file=f"{maindir}/Dnine.png")
+                zero = ImageTk.PhotoImage(file=f"{maindir}/Dzero.png")
+                num1.config(image=one,bg="white")
+                num2.config(image=two,bg="white")
+                num3.config(image=three,bg="white")
+                num4.config(image=four,bg="white")
+                num5.config(image=five,bg="white")
+                num6.config(image=six,bg="white")
+                num7.config(image=seven,bg="white")
+                num8.config(image=eight,bg="white")
+                num9.config(image=nine,bg="white")
+                num0.config(image=zero,bg="white")
+    if mainui == 'default':
+        if mainthm == 'Dark':
+            num1.config(bg="black")
+            num2.config(bg="black")
+            num3.config(bg="black")
+            num4.config(bg="black")
+            num5.config(bg="black")
+            num6.config(bg="black")
+            num7.config(bg="black")
+            num8.config(bg="black")
+            num9.config(bg="black")
+            num0.config(bg="black")  
+            print("hello")
+        if mainthm == 'Light':
+            num1.config(bg="white",fg="black")
+            num2.config(bg="white",fg="black")
+            num3.config(bg="white",fg="black")
+            num4.config(bg="white",fg="black")
+            num5.config(bg="white",fg="black")
+            num6.config(bg="white",fg="black")
+            num7.config(bg="white",fg="black")
+            num8.config(bg="white",fg="black")
+            num9.config(bg="white",fg="black")
+            num0.config(bg="white",fg="black")  
+    try:
+        settings["texture"]=maindir
+        settings["theme"]=mainthm
+        settings["ui"]=mainui
+    except:
+        pass
+except:
+    pass
+
 mainFrame.focus()
 
 #================MAINLOOP===================
@@ -5099,6 +5398,8 @@ with open('mem.txt','w+')as f:
         else:
             f.write(mem + ',')
 
+with open('settings.txt','w') as f:
+    f.write(str(settings))
 #=============CREDITS===============#())
 # Made by THIRUCHLVAN (AKA) DUFFY
 # MY YOUTUBE CHANNEL:- https://youtube.com/duffyyt
