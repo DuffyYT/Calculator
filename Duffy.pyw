@@ -1,6 +1,5 @@
 #============================IMPORTS==============================
 
-from collections import defaultdict
 import tkinter as tk                         #Importing Tkinter module for GUI
 from tkinter import *                        #Importing all tkinter files
 import math                                  #Importing math module for arithmetic
@@ -36,7 +35,7 @@ for space in range(len(memory)): #Removing extra space
 
 global counter #➡ History tab counter
 counter = 0
-
+global one
 global sCounter #➡ Settings tab counter
 sCounter = 0
 
@@ -79,6 +78,15 @@ settings = {
     "texture":texture,
     "sounds":True
 }
+
+try:
+    settings["padd"] = mainpad
+    settings["theme"] = mainthm
+    settings["ui"] = mainui
+    settings["texture"] = maindir
+    
+except:
+    pass
 
 #===========================CLASSES============================
 
@@ -674,7 +682,7 @@ class decNum:
 class setting:
 
     def __init__(self, pad,one=None,two=None,three=None,four=None,five=None,six=None,seven=None,
-                  eight=None,nine=None,zero=None,dot=None,dash=None,button=None,dele=None,delete=None,quit=None,ad=None,sub=None,mul=None,div=None,sq=None,qs=None,eq=None):
+                  eight=None,nine=None,zero=None,dot=None,dash=None,button=None,dele=None,delete=None,quit=None,ad=None,sub=None,mul=None,div=None,sq=None,sqr=None,eq=None):
             '''
             enter pad for creating main settings page in the the current comtext pad\n
             enter your pads to change the theme \n
@@ -704,13 +712,13 @@ class setting:
             self.mul = mul
             self.div = div
             self.sq = sq
-            self.qs = qs
+            self.sqr = sqr
             self.eq = eq
 
             tlist = [(self.one),(self.two),(self.three),(self.four),(self.five),(self.six),
                                (self.seven),(self.eight),(self.nine),(self.zero),(self.dot),(self.dash)] #list of primary buttons with <black> background and <white> foreground
             clst = [(self.dele),(self.delete),(self.quit)]
-            olst = [(self.ad),(self.sub),(self.mul),(self.div),(self.sq),(self.qs)]
+            olst = [(self.ad),(self.sub),(self.mul),(self.div),(self.sq),(self.sqr)]
 
             if sCounter == 0: #for detecting if settings page is not present
                 global theme
@@ -733,6 +741,9 @@ class setting:
                     global zero
                     global dot
                     global dash
+                    global eq
+                    global sq
+                    global sqr
                     global Done
                     global Dtwo
                     global Dthree
@@ -745,6 +756,9 @@ class setting:
                     global Dzero
                     global Ddot
                     global Ddash
+                    global Deq
+                    global Dsq
+                    global Dsqr
                     global theme
                     if mainui == 'default':
                         if theme == 'Dark' or mainthm == 'Dark': #for detecting the current theme to change to light mode 
@@ -781,13 +795,18 @@ class setting:
                                     butts.config(bg="#fc8700",fg="black",activebackground="#fc8700",activeforeground="black")
                                 except AttributeError:
                                     pass
+                            for butts in olst:
+                                try:
+                                    butts.config(bg="orange",fg="black",activebackground="#ff0000",activeforeground="black")
+                                except AttributeError:
+                                    pass
                             (self.pad).config(bg="black")
                             settings["theme"]='Dark'
                             mainthm = 'Dark'
                             theme = 'Dark' #defaulting theme value to denote the present dark mode
 
                     elif mainui == 'custom':
-                    #  try:   
+                      try:   
                         one = ImageTk.PhotoImage(file=f"{maindir}/one.png")
                         two = ImageTk.PhotoImage(file=f"{maindir}/two.png")
                         three = ImageTk.PhotoImage(file=f"{maindir}/three.png")
@@ -800,6 +819,9 @@ class setting:
                         zero = ImageTk.PhotoImage(file=f"{maindir}/zero.png")
                         dot = ImageTk.PhotoImage(file=f"{maindir}/dot.png") 
                         dash = ImageTk.PhotoImage(file=f"{maindir}/dash.png")
+                        eq = ImageTk.PhotoImage(file=f"{maindir}/eq.png")
+                        sq = ImageTk.PhotoImage(file=f"{maindir}/sq.png")
+                        sqr = ImageTk.PhotoImage(file =f"{maindir}/sqr.png")
                         Done = ImageTk.PhotoImage(file=f"{maindir}/Done.png")
                         Dtwo = ImageTk.PhotoImage(file=f"{maindir}/Dtwo.png")
                         Dthree = ImageTk.PhotoImage(file=f"{maindir}/Dthree.png")
@@ -812,6 +834,9 @@ class setting:
                         Dzero = ImageTk.PhotoImage(file=f"{maindir}/Dzero.png")
                         Ddot = ImageTk.PhotoImage(file=f"{maindir}/Ddot.png") 
                         Ddash = ImageTk.PhotoImage(file=f"{maindir}/Ddash.png")
+                        Deq = ImageTk.PhotoImage(file=f"{maindir}/Deq.png")
+                        Dsq = ImageTk.PhotoImage(file=f"{maindir}/Dsq.png")
+                        Dsqr = ImageTk.PhotoImage(file =f"{maindir}/Dsqr.png")
                         if mainthm == 'Dark' or theme == 'Dark': #for detecting the current theme to change to light mode 
                             (self.one).config(image=Done,bg="white")
                             (self.two).config(image=Dtwo,bg="white")
@@ -823,6 +848,9 @@ class setting:
                             (self.eight).config(image=Deight,bg="white")
                             (self.nine).config(image=Dnine,bg="white")
                             (self.zero).config(image=Dzero,bg="white")
+                            (self.eq).config(image=Deq,bg="white")
+                            (self.sq).config(image=Dsq,bg="white")
+                            (self.sqr).config(image=Dsqr,bg="white")
                             try:
                                 (self.dot).config(image=Ddot,bg="white")
                                 (self.dash).config(image=Ddash,bg="white")
@@ -845,9 +873,12 @@ class setting:
                             (self.eight).config(image=eight,bg="black")
                             (self.nine).config(image=nine,bg="black")
                             (self.zero).config(image=zero,bg="black")
+                            (self.eq).config(image=eq,bg="black")
+                            (self.sq).config(image=sq,bg="black")
+                            (self.sqr).config(image=sqr,bg="black")
                             try:
-                                (self.dot).config(image=dot,bg="white")
-                                (self.dash).config(image=dash,bg="white")
+                                (self.dot).config(image=dot,bg="black")
+                                (self.dash).config(image=dash,bg="black")
                             except:
                                 print("pad has no dot button")
                             darkb.config(image=toggle_on_new)
@@ -855,8 +886,8 @@ class setting:
                             settings["theme"]='Dark'
                             mainthm = 'Dark'  
                             theme = 'Dark' #defaulting theme value to denote the present dark mode
-                    #  except :
-                    #      print("user canceled operation")
+                      except :
+                          print("whats happening")
                 
                 def customTheme():
                     global maindir
@@ -876,6 +907,9 @@ class setting:
                     global zero
                     global dot
                     global dash
+                    global eq
+                    global sq
+                    global sqr
                     global Done
                     global Dtwo
                     global Dthree
@@ -888,6 +922,9 @@ class setting:
                     global Dzero
                     global Ddot
                     global Ddash
+                    global Deq
+                    global Dsq
+                    global Dsqr
                     global texture
                     texture = filedialog.askdirectory(title="Select theme folder")
                     print("Texture:",texture)
@@ -906,6 +943,9 @@ class setting:
                             zero = ImageTk.PhotoImage(file=f"{texture}/zero.png")
                             dot = ImageTk.PhotoImage(file=f"{texture}/dot.png")
                             dash = ImageTk.PhotoImage(file=f"{texture}/dash.png")
+                            eq = ImageTk.PhotoImage(file=f"{maindir}/eq.png")
+                            sq = ImageTk.PhotoImage(file=f"{maindir}/sq.png")
+                            sqr = ImageTk.PhotoImage(file =f"{maindir}/sqr.png")
                             Done = ImageTk.PhotoImage(file=f"{texture}/Done.png")
                             Dtwo = ImageTk.PhotoImage(file=f"{texture}/Dtwo.png")
                             Dthree = ImageTk.PhotoImage(file=f"{texture}/Dthree.png")
@@ -918,6 +958,9 @@ class setting:
                             Dzero = ImageTk.PhotoImage(file=f"{texture}/Dzero.png")
                             Ddot = ImageTk.PhotoImage(file=f"{texture}/Ddot.png")
                             Ddash = ImageTk.PhotoImage(file=f"{texture}/Ddash.png")
+                            Deq = ImageTk.PhotoImage(file=f"{maindir}/Deq.png")
+                            Dsq = ImageTk.PhotoImage(file=f"{maindir}/Dsq.png")
+                            Dsqr = ImageTk.PhotoImage(file =f"{maindir}/Dsqr.png")
                             if theme == 'Dark':
                                 (self.one).config(image=one)
                                 (self.two).config(image=two)
@@ -931,6 +974,9 @@ class setting:
                                 (self.zero).config(image=zero)
                                 (self.dot).config(image=dot)    
                                 (self.dash).config(image=dash)
+                                (self.eq).config(image=eq)
+                                (self.sq).config(image=sq)
+                                (self.sqr).config(image=sqr)
                                 settings["texture"] = texture
                                 settings["ui"] = 'custom'
                             elif theme == 'Light':
@@ -946,12 +992,15 @@ class setting:
                                 (self.zero).config(image=Dzero)
                                 (self.dot).config(image=Ddot)    
                                 (self.dash).config(image=Ddash)
+                                (self.Deq).config(image=Deq)
+                                (self.Dsq).config(image=Dsq)
+                                (self.Dsqr).config(image=Dsqr)
                                 settings["texture"] = texture
                                 settings["ui"] = 'custom'
                         elif texture == '':
                             print("No folder was selected")
                     except:
-                        pass
+                        print("something is wrong")
 
                 def defaultTheme():
                     global theme
@@ -971,6 +1020,11 @@ class setting:
                             (self.eight).config(image='',fg="black")
                             (self.nine).config(image='',fg="black")
                             (self.zero).config(image='',fg="black")
+                            (self.dot).config(image='',fg="black")
+                            (self.dash).config(image='',fg="black")
+                            (self.eq).config(image='',fg="black")
+                            (self.sq).config(image='',fg="black")
+                            (self.sqr).config(image='',fg="black")
                             print(mainthm,theme)
                         if mainthm == 'Dark' or theme == 'Dark':
                             (self.one).config(image='',fg="white")
@@ -983,7 +1037,15 @@ class setting:
                             (self.eight).config(image='',fg="white")
                             (self.nine).config(image='',fg="white")
                             (self.zero).config(image='',fg="white")
+                            (self.dot).config(image='',fg="white")
+                            (self.dash).config(image='',fg="white")
+                            (self.eq).config(image='',fg="white")
+                            (self.sq).config(image='',fg="white")
+                            (self.sqr).config(image='',fg="white")
                             print(mainthm,theme)
+                    
+                    else:
+                        print("already default.")
                 
                 def dpi():
                     ctypes.windll.shcore.SetProcessDpiAwareness(True)
@@ -1047,12 +1109,55 @@ class Lsetting:
             except:
                 pass
 
+class Dsettings:
+
+    def __init__(self,one=None,two=None,three=None,four=None,five=None,six=None,seven=None,eight=None,nine=None,zero=None,dot=None,dash=None,dele=None,delete=None,quit=None):
+
+        self.one = one
+        self.two = two
+        self.three = three
+        self.four = four
+        self.five = five
+        self.six = six
+        self.seven = seven
+        self.eight = eight
+        self.nine = nine
+        self.zero = zero
+        self.dot = dot
+        self.dash = dash
+        self.dele = dele
+        self.delete = delete
+        self.quit = quit
+
+        if mainthm == 'Dark':
+            one.config(image=one)
+            two.config(image=two)
+            Stnum3.config(image=three)
+            Stnum4.config(image=four)
+            Stnum5.config(image=five)
+            Stnum6.config(image=six)
+            Stnum7.config(image=seven)
+            Stnum8.config(image=eight)
+            Stnum9.config(image=nine)
+            Stnum0.config(image=zero)
+        if mainthm == 'Light':
+            Stnum1.config(image=Done)
+            Stnum2.config(image=Dtwo)
+            Stnum3.config(image=Dthree)
+            Stnum4.config(image=Dfour)
+            Stnum5.config(image=Dfive)
+            Stnum6.config(image=Dsix)
+            Stnum7.config(image=Dseven)
+            Stnum8.config(image=Deight)
+            Stnum9.config(image=Dnine)
+            Stnum0.config(image=Dzero)
+
 def setting1():
     setting(entryPad, num1, num2, num3, num4, num5, num6, num7, num8, num9, num0, decimal, Negative,settings1,Clear1,Clear2,Clear3,add,subtract,multiply,divide,Sqrt,Sqr,equals)
 def setting2():
     setting(StentryPad, Stnum1, Stnum2, Stnum3, Stnum4, Stnum5, Stnum6, Stnum7, Stnum8, Stnum9, Stnum0, Stdecimal, StNegative,settings2,StC,StCE,StAC,Stadd,Stsubtract,Stmultiply,Stdivide,StSqrt,StSqr,Stequals)
 def setting3():
-    setting(SentryPad,Snum1,Snum2,Snum3,Snum4,Snum5,Snum6,Snum7,Snum8,Snum9,Snum0,Sdecimal,SNegative,button=settings3)
+    setting(SentryPad,Snum1,Snum2,Snum3,Snum4,Snum5,Snum6,Snum7,Snum8,Snum9,Snum0,Sdecimal,SNegative,settings3,SC,SCE,SAC,Sadd,Ssubtract,Smultiply,Sdivide,SSqr,Sqrt,Sequals)
 def setting4():
     setting(WentryPad,Wnum1,Wnum2,Wnum3,Wnum4,Wnum5,Wnum6,Wnum7,Wnum8,Wnum9,Wnum0,Wdecimal,button=settings4)
 def setting5():
@@ -3542,45 +3647,45 @@ decimal.place(relheight=0.14, relwidth=0.14, relx=0.295, rely=0.44)
 #========================OPERATOR_BUTTONS===========================
 
 # + #
-add = tk.Button(entryPad, bg="#5D8AA6", text="+", padx=19.48, pady=10, command=Add, activebackground="#5D8AA6")
+add = tk.Button(entryPad, bg="#5D8AA6", text="+", padx=19.48, pady=10, command=Add, activebackground="#5D8AA6",border=0,borderwidth=0,)
 add.place(relheight=0.14, relwidth=0.14, relx=0.44, rely=0.005)
 
 # - #
-subtract = tk.Button(entryPad, bg="#5D8AA6", text="-", padx=19.48, pady=10, command=Subtract, activebackground="#5D8AA6")
+subtract = tk.Button(entryPad, bg="#5D8AA6", text="-", padx=19.48, pady=10, command=Subtract, activebackground="#5D8AA6",border=0,borderwidth=0,)
 subtract.place(relheight=0.14, relwidth=0.14, relx=0.585, rely=0.005)
 
 # * #
-multiply = tk.Button(entryPad, bg="#5D8AA6", text="x", padx=20, pady=10, command=Multiply, activebackground="#5D8AA6")
+multiply = tk.Button(entryPad, bg="#5D8AA6", text="x", padx=20, pady=10, command=Multiply, activebackground="#5D8AA6",border=0,borderwidth=0,)
 multiply.place(relheight=0.14, relwidth=0.14, relx=0.44, rely=0.15)
 
 # / #
-divide = tk.Button(entryPad, bg="#5D8AA6", text="/", padx=19.48, pady=10, command=Divide, activebackground="#5D8AA6")
+divide = tk.Button(entryPad, bg="#5D8AA6", text="/", padx=19.48, pady=10, command=Divide, activebackground="#5D8AA6",border=0,borderwidth=0,)
 divide.place(relheight=0.14, relwidth=0.14, relx=0.585, rely=0.15)
 
 # = #
-equals = tk.Button(entryPad, bg="#D7D7D9", text="=", padx=46, pady=10, command=Equals, activebackground="#D7D7D9")
+equals = tk.Button(entryPad, bg="#D7D7D9", text="=", padx=46, pady=10, command=Equals, activebackground="#D7D7D9",border=0,borderwidth=0,)
 equals.place(relheight=0.14, relwidth=0.285, relx=0.44, rely=0.295)
 
 # √ #
-Sqrt = tk.Button(entryPad, bg="#5D8AA6", text="√", padx=19.48, pady=10, command=sqrt, activebackground="#5D8AA6")
+Sqrt = tk.Button(entryPad, bg="#5D8AA6", text="√", padx=19.48, pady=10, command=sqrt, activebackground="#5D8AA6",border=0,borderwidth=0,)
 Sqrt.place(relheight=0.14, relwidth=0.14, relx=0.44, rely=0.44)
 
 # ^ #
-Sqr = tk.Button(entryPad, bg="#5D8AA6", text="^", padx=17, pady=10, command=sqr, activebackground="#5D8AA6")
+Sqr = tk.Button(entryPad, bg="#5D8AA6", text="^", padx=17, pady=10, command=sqr, activebackground="#5D8AA6",border=0,borderwidth=0,)
 Sqr.place(relheight=0.14, relwidth=0.14, relx=0.585, rely=0.44)
 
 #=========================CLEAR_BUTTONS=======================
 
 # COMPLETE_CLEAR #
-Clear1 = tk.Button(entryPad, bg="#fc8700", text="C", padx=43.2, pady=33, command=C, activebackground="black", activeforeground="#fc8700")
+Clear1 = tk.Button(entryPad, bg="#fc8700", text="C", padx=43.2, pady=33, command=C, activebackground="black", activeforeground="#fc8700",border=0,borderwidth=0,)
 Clear1.place(relheight=0.285, relwidth=0.27, relx=0.73, rely=0.005)
 
 # MAIN_FIELD_CLEAR #
-Clear2 = tk.Button(entryPad, bg="#fc8700", text="CE", padx=40, pady=10, command=CE, activebackground="black", activeforeground="#fc8700")
+Clear2 = tk.Button(entryPad, bg="#fc8700", text="CE", padx=40, pady=10, command=CE, activebackground="black", activeforeground="#fc8700",border=0,borderwidth=0,)
 Clear2.place(relheight=0.14, relwidth=0.27, relx=0.73, rely=0.295)
 
 # EXIT BUTTONS #
-Clear3 = tk.Button(entryPad, bg="#F24607", text="AC", padx=39.15, pady=10, command=AC, activebackground="black", activeforeground="#F24607")
+Clear3 = tk.Button(entryPad, bg="#F24607", text="AC", padx=39.15, pady=10, command=AC, activebackground="black", activeforeground="#F24607",border=0,borderwidth=0,)
 Clear3.place(relheight=0.14, relwidth=0.27, relx=0.73, rely=0.44)
 
 settings1 = tk.Button(entryPad, bg="black", relief=FLAT, activebackground="black", image=newpic, border=0, borderwidth=0, command=setting1)
@@ -3636,6 +3741,7 @@ def standard():
  global StC
  global StCE
  global StAC
+ 
  if Pad == 0:
     dPad = 0
     Pad = 1
@@ -3753,30 +3859,6 @@ def standard():
     if mainthm == 'Light' and mainui == 'default':
         Lsetting( Stnum1,Stnum2,Stnum3,Stnum4,Stnum5,Stnum6,Stnum7,Stnum8,Stnum9,Stnum0,Stdecimal,StNegative,StC,StCE,StAC)
 
-    if mainui == 'custom':
-        if mainthm == 'Dark':
-            Stnum1.config(image=one)
-            Stnum2.config(image=two)
-            Stnum3.config(image=three)
-            Stnum4.config(image=four)
-            Stnum5.config(image=five)
-            Stnum6.config(image=six)
-            Stnum7.config(image=seven)
-            Stnum8.config(image=eight)
-            Stnum9.config(image=nine)
-            Stnum0.config(image=zero)
-        if mainthm == 'Light':
-            Stnum1.config(image=Done)
-            Stnum2.config(image=Dtwo)
-            Stnum3.config(image=Dthree)
-            Stnum4.config(image=Dfour)
-            Stnum5.config(image=Dfive)
-            Stnum6.config(image=Dsix)
-            Stnum7.config(image=Dseven)
-            Stnum8.config(image=Deight)
-            Stnum9.config(image=Dnine)
-            Stnum0.config(image=Dzero)
-
     settings2 = tk.Button(StentryPad, bg="black", relief='flat', image=newpic, border=0, borderwidth=0, activebackground="black",command=setting2)
     settings2.place(relwidth=0.1, relheight=0.1, relx = 0.01, rely=0.89)
  else:
@@ -3809,6 +3891,7 @@ def scientific():
  global Sdecimal
  global SCE
  global SC
+ global SAC
  global Sequals
  global dPad
  global Pad
@@ -5493,8 +5576,84 @@ if mainpad == 'entrypad':
     except:
         pass
 elif mainpad == 'Stentrypad':
-    print("StentryPad")
-    standard()
+    print("Entrypad")
+    try:
+        if maindir:
+            if mainui == 'custom':
+                if mainthm == 'Dark':
+                    one = ImageTk.PhotoImage(file=f'{maindir}/one.png')
+                    two = ImageTk.PhotoImage(file=f"{maindir}/two.png")
+                    three = ImageTk.PhotoImage(file=f"{maindir}/three.png")
+                    four = ImageTk.PhotoImage(file=f"{maindir}/four.png")
+                    five = ImageTk.PhotoImage(file=f"{maindir}/five.png")
+                    six = ImageTk.PhotoImage(file=f"{maindir}/six.png")
+                    seven = ImageTk.PhotoImage(file=f"{maindir}/seven.png")
+                    eight = ImageTk.PhotoImage(file=f"{maindir}/eight.png")
+                    nine = ImageTk.PhotoImage(file=f"{maindir}/nine.png")
+                    zero = ImageTk.PhotoImage(file=f"{maindir}/zero.png")
+                    num1.config(image=one,bg="black")
+                    num2.config(image=two,bg="black")
+                    num3.config(image=three,bg="black")
+                    num4.config(image=four,bg="black")
+                    num5.config(image=five,bg="black")
+                    num6.config(image=six,bg="black")
+                    num7.config(image=seven,bg="black")
+                    num8.config(image=eight,bg="black")
+                    num9.config(image=nine,bg="black")
+                    num0.config(image=zero,bg="black")
+                
+                if mainthm == 'Light':
+                    one = ImageTk.PhotoImage(file=f'{maindir}/Done.png')
+                    two = ImageTk.PhotoImage(file=f"{maindir}/Dtwo.png")
+                    three = ImageTk.PhotoImage(file=f"{maindir}/Dthree.png")
+                    four = ImageTk.PhotoImage(file=f"{maindir}/Dfour.png")
+                    five = ImageTk.PhotoImage(file=f"{maindir}/Dfive.png")
+                    six = ImageTk.PhotoImage(file=f"{maindir}/Dsix.png")
+                    seven = ImageTk.PhotoImage(file=f"{maindir}/Dseven.png")
+                    eight = ImageTk.PhotoImage(file=f"{maindir}/Deight.png")
+                    nine = ImageTk.PhotoImage(file=f"{maindir}/Dnine.png")
+                    zero = ImageTk.PhotoImage(file=f"{maindir}/Dzero.png")
+                    num1.config(image=one,bg="white")
+                    num2.config(image=two,bg="white")
+                    num3.config(image=three,bg="white")
+                    num4.config(image=four,bg="white")
+                    num5.config(image=five,bg="white")
+                    num6.config(image=six,bg="white")
+                    num7.config(image=seven,bg="white")
+                    num8.config(image=eight,bg="white")
+                    num9.config(image=nine,bg="white")
+                    num0.config(image=zero,bg="white")
+        if mainui == 'default':
+            if mainthm == 'Dark':
+                num1.config(bg="black")
+                num2.config(bg="black")
+                num3.config(bg="black")
+                num4.config(bg="black")
+                num5.config(bg="black")
+                num6.config(bg="black")
+                num7.config(bg="black")
+                num8.config(bg="black")
+                num9.config(bg="black")
+                num0.config(bg="black")
+                Clear1.config(bg="#fc8700")
+                Clear2.config(bg="#fc8700")
+                Clear3.config(bg="#fc8700")
+            if mainthm == 'Light':
+                num1.config(bg="white",fg="black")
+                num2.config(bg="white",fg="black")
+                num3.config(bg="white",fg="black")
+                num4.config(bg="white",fg="black")
+                num5.config(bg="white",fg="black")
+                num6.config(bg="white",fg="black")
+                num7.config(bg="white",fg="black")
+                num8.config(bg="white",fg="black")
+                num9.config(bg="white",fg="black")
+                num0.config(bg="white",fg="black") 
+                Clear1.config(bg="#ff0000")
+                Clear2.config(bg="#ff0000")
+                Clear3.config(bg="#ff0000") 
+    except:
+        pass
 elif mainpad == 'Sentrypad':
     print("Sentrypad")
     scientific()
